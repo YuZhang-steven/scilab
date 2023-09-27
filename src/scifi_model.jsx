@@ -6,6 +6,7 @@ import React, { useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from 'three'
 import { a, useSpring, animated } from "@react-spring/three";
+import { useFrame } from "@react-three/fiber";
 
 
 
@@ -14,17 +15,73 @@ import { a, useSpring, animated } from "@react-spring/three";
 
 export default function Scifi_model(props) {
 
+  // useFrame(() => {
+  //   icon01.current.position.x -= 0.01
 
-  const icons = useRef()
+  //   if (icon01.current.position.x < -3) {
+  //     icon01.current.position.x = 0
+  //   }
+
+
+
+
+  // })
+
+  const icon01 = useRef()
+  const icon02 = useRef()
+  const icon03 = useRef()
   const rotateWheel = useRef()
   const webShow = useRef()
 
   let currDegY = 0
 
   const [springs, api] = useSpring(() => ({
-    rotation: [0, 0.12, -1.204],
+
+    rotation: [0, 0, 0],
     config: { mass: 4, friction: 100 }
   }), [])
+
+  const [icon001] = useSpring(() => ({
+    from: {
+      pos: [0, 0, 0],
+
+    },
+    to: {
+      pos: [-3, 0, 0],
+
+    },
+    config: { duration: 4000 },
+    delay: 100,
+    loop: true
+  }))
+
+  const [icon002] = useSpring(() => ({
+    from: {
+      pos: [0, 0, 0],
+
+    },
+    to: {
+      pos: [-3, 0, 0],
+
+    },
+    config: { duration: 4000 },
+    delay: 500,
+    loop: true
+  }))
+
+  const [icon003] = useSpring(() => ({
+    from: {
+      pos: [0, 0, 0],
+
+    },
+    to: {
+      pos: [-3, 0, 0],
+
+    },
+    config: { duration: 4000 },
+    delay: 1000,
+    loop: true
+  }))
 
 
   // console.log(springs)
@@ -47,12 +104,12 @@ export default function Scifi_model(props) {
 
     if (intersect.x > center.x) {
       console.log("right")
-      api.start({ rotation: [0, webShow.current.rotation.y + 0.5, -1.204] })
+      api.start({ rotation: [0, webShow.current.rotation.y + 0.5, 0] })
 
 
     } else {
       console.log('left')
-      api.start({ rotation: [0, webShow.current.rotation.y - 0.5, -1.204] })
+      api.start({ rotation: [0, webShow.current.rotation.y - 0.5, 0] })
       // webShow.current.rotation.y -= 0.5
 
     }
@@ -69,7 +126,7 @@ export default function Scifi_model(props) {
 
   const iconClick = () => {
     console.log("icon click")
-    icons.current.material.color.set(`hsl(${Math.random() * 360}, 100%, 75%)`)
+    icon01.current.material.color.set(`hsl(${Math.random() * 360}, 100%, 75%)`)
   }
 
   const { nodes, materials } = useGLTF("src/assets/Sci-fi_lab_export.gltf");
@@ -133,13 +190,7 @@ export default function Scifi_model(props) {
           geometry={nodes.Plane001.geometry}
           material={materials.Orange}
         />
-        <mesh
-          name="Cylinder001"
-          castShadow
-          receiveShadow
-          geometry={nodes.Cylinder001.geometry}
-          material={materials.Cyab}
-        />
+
         <mesh
           name="Cube005"
           castShadow
@@ -161,24 +212,60 @@ export default function Scifi_model(props) {
           geometry={nodes.Floor.geometry}
           material={materials.Grey}
         />
-        <mesh
-          name="icon_cube"
+        <animated.mesh
+          name="icon_cube01"
           castShadow
           receiveShadow
-          geometry={nodes.icon_cube.geometry}
-          material={nodes.icon_cube.material}
+          geometry={nodes.icon_cube01.geometry}
+          material={nodes.icon_cube01.material}
+          position={icon001.pos}
 
-          ref={icons}
+
+          ref={icon01}
           onClick={iconClick}
         />
+        <animated.mesh
+          name="icon_cube02"
+          castShadow
+          receiveShadow
+          geometry={nodes.icon_cube02.geometry}
+          material={materials.Orange}
+          position={icon002.pos}
+
+          ref={icon02}
+        />
+        <animated.mesh
+          name="icon_cube03"
+          castShadow
+          receiveShadow
+          geometry={nodes.icon_cube03.geometry}
+          material={materials.Red}
+          position={icon003.pos}
+
+          ref={icon03}
+        />
+        <mesh
+          name="cylinders"
+          castShadow
+          receiveShadow
+          geometry={nodes.cylinders.geometry}
+          material={materials.Cyab}
+        />
+        <mesh
+          name="test_cylinder001"
+          castShadow
+          receiveShadow
+          geometry={nodes.test_cylinder001.geometry}
+          material={materials["Cyab.001"]}
+        />
+
         <mesh
           name="Base"
           castShadow
           receiveShadow
           geometry={nodes.Base.geometry}
           material={materials.Grey}
-          rotation={[-Math.PI, 0, -Math.PI]}
-          scale={-1}
+
         />
         <mesh
           name="Rotate"
@@ -186,8 +273,6 @@ export default function Scifi_model(props) {
           receiveShadow
           geometry={nodes.Rotate.geometry}
           material={materials.White}
-          rotation={[-Math.PI, 0, -Math.PI]}
-          scale={-1}
 
           ref={rotateWheel}
           onClick={rotateClick}
@@ -200,8 +285,7 @@ export default function Scifi_model(props) {
           receiveShadow
           geometry={nodes.NameScreen.geometry}
           material={nodes.NameScreen.material}
-          position={[0, -0.487, 0]}
-          scale={[0.9, 1.62, 0.9]}
+
         />
         <animated.mesh
           name="Web_Screen"
@@ -209,9 +293,9 @@ export default function Scifi_model(props) {
           receiveShadow
           geometry={nodes.Web_Screen.geometry}
           material={nodes.Web_Screen.material}
-          position={[-0.183, 1.038, 0.283]}
+
           rotation={springs.rotation}
-          scale={[0.85, 1, 1.15]}
+
 
           ref={webShow}
         />
